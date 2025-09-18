@@ -1,0 +1,129 @@
+https://www.expedia.com/newsroom/
+
+package runner;
+
+import java.io.IOException;
+import java.time.Duration;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import org.testng.Assert;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+
+import utils.Base;
+import utils.LoggerHandler;
+import utils.Reporter;
+import utils.Screenshot;
+
+public class TestSample extends Base{
+    ExtentReports extent;
+    ExtentTest test;
+    @BeforeMethod
+    public void before(){
+        openBrowser();
+        extent=Reporter.generateExtentReport("reports");
+    }
+    @Test
+    public void testcase1() throws IOException{
+        test=extent.createTest("click on search");
+       try{
+      // driver.navigate().refresh();
+       Thread.sleep(5000);
+           WebElement where=driver.findElement(By.xpath("(//button[@type='button'])[5]"));
+        where.click();
+        where.sendKeys("Coimbatore");
+        where.sendKeys(Keys.ENTER);
+        driver.findElement(By.xpath("(//button[@type=\"button\"])[6]")).click();
+        test.log(Status.PASS, "click on search button");
+        driver.findElement(By.xpath("(//button[text()='Done'])[1]")).click();
+        LoggerHandler.info("click on Done");
+        driver.findElement(By.xpath("//button[@type=\"submit\"]")).click();
+        LoggerHandler.info("click on submit");
+        Screenshot.captureScreenShot("search");
+        Reporter.attachScreenshotToReport("search.png", test, "search screenshot");
+        LoggerHandler.info("click on search");
+        //test.log(Status.PASS, "click on search");
+
+       }
+       catch(Exception e){
+        System.out.println(e);
+       }
+    }
+    @Test
+    public void testcase2() throws IOException{
+        test=extent.createTest("click on France");
+        try{
+            //driver.navigate().refresh();
+          driver.navigate().to("https://www.expedia.com/newsroom/");
+           Actions act=new Actions(driver);
+           WebElement us=driver.findElement(By.xpath("//a[text()=\"United States\"]"));
+           act.moveToElement(us).perform();
+           test.log(Status.PASS, "Hover on united states");
+           LoggerHandler.info("Hover on united states");
+           driver.findElement(By.xpath("//a[text()=\"France\"]")).click();
+
+           LoggerHandler.info("click on France");
+           String expect=driver.findElement(By.xpath("(//h5[text()='Newsroom'])[1]")).getText();
+           String actual="Newsroom";
+           Assert.assertEquals(expect, actual);
+           test.log(Status.PASS, "Validation Passed: Expected = " + actual);
+           Screenshot.captureScreenShot("expedia_screenshot");
+           Reporter.attachScreenshotToReport("expedia_screenshot.png", test, "France Screenshot");
+           test.log(Status.PASS, "click on France");           
+           LoggerHandler.info("screenshot is saved");
+           
+        }
+        catch(Exception e){
+            System.out.println(e);
+           }
+    }
+    @Test
+    public void testcase3() throws IOException{
+        test=extent.createTest("list your property");
+        try{
+         //driver.navigate().refresh();
+           Thread.sleep(3000);
+             driver.findElement(By.xpath("//a[text()=\"List your property\"]")).click();
+             for(String handle:driver.getWindowHandles()){
+                driver.switchTo().window(handle);
+             }
+             driver.findElement(By.xpath("//p[text()='Private residence']")).click();
+             LoggerHandler.info("click on Private residence");
+             driver.findElement(By.xpath("//button[@id=\"onetrust-pc-btn-handler\"]")).click(); 
+             LoggerHandler.info("click on button");
+            driver.findElement(By.xpath("//button[@id=\"accept-recommended-btn-handler\"]")).click();
+            LoggerHandler.info("click on button");
+            driver.findElement(By.xpath("//button[@class=\"save-preference-btn-handler onetrust-close-btn-handler\"]")).click();
+            LoggerHandler.info("click on button");
+            String expect=driver.findElement(By.xpath("//h2[@class=\"bed-and-bath__title\"]")).getText();
+            String actual="See how much you could earn!";
+            Assert.assertEquals(expect, actual);
+            LoggerHandler.info("same message");
+            test.log(Status.PASS, "Validation Passed: Expected = " + actual);
+            Screenshot.captureScreenShot("property");
+            Reporter.attachScreenshotToReport("Property_screenshot.png",test,"property screenshot");
+            test.log(Status.PASS, "click on Property");
+            LoggerHandler.info("click on Property");
+
+        }
+        catch(Exception e){
+            test.log(Status.PASS, "click on Property");
+            System.out.println(e);
+           }
+    }
+    @AfterMethod
+    public void after(){
+        driver.quit();
+        extent.flush();
+    }
+}

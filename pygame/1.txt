@@ -1,0 +1,89 @@
+https://www.toptal.com/talent/apply
+
+package runner;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.ElementClickInterceptedException;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+
+import utils.Base;
+import utils.ExcelReader;
+import utils.Reporter;
+import utils.Screenshot;
+import utils.WebDriverHelper;
+
+public class TestSample extends Base {
+
+    WebDriverHelper helper=null;
+    Actions actions=null;
+    ExtentReports extent=null;
+    ExtentTest test=null;
+
+
+
+    @BeforeMethod
+    public void launchBrowser() throws MalformedURLException{
+       openBrowser();
+       extent=Reporter.generateExtentReport("demo report");
+       helper=new WebDriverHelper(driver);
+       actions=new Actions(driver);
+    }
+
+    @Test
+    public void testOne() throws IOException {
+        test=extent.createTest("Sample test");
+        try{
+        driver.findElement(By.xpath("//div[@class=\"_1WRJuyTt _3dVVljYP _2FR6nyQk\"]")).click();
+
+        driver.findElement(By.xpath("(//div[@class=\"_1oemECVn\"])[1]")).click();
+
+        WebElement full=driver.findElement(By.xpath("//input[@placeholder=\"Full name\"]"));
+        String val=ExcelReader.readdata("./testdata/testdata.xlsx", "Sheet1", 0, 0);
+        full.sendKeys(val);
+
+        driver.findElement(By.xpath("//input[@placeholder='E-mail']")).sendKeys("Email@email.com");
+
+        
+        driver.findElement(By.xpath("//input[@placeholder=\"Password\"]")).sendKeys("password@007");
+        try{
+        driver.findElement(By.xpath("//button[@data-testid=\"apply-form-button\"]")).click();
+        }
+        catch(ElementClickInterceptedException e){
+            e.printStackTrace();
+        }
+
+        test.pass("Screenshot");
+        Screenshot.getScreenShot(driver, "Screenshot.png");
+        Reporter.attachScreenshotToReport(test, driver, "Screenshot.png");
+
+
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        
+    }
+
+    @AfterMethod
+    public void tearDown() {
+        if(driver!=null)
+        {
+            driver.quit();
+        }
+        if(extent!=null)
+        {
+            extent.flush();
+        }
+    }
+}

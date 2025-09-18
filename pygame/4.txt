@@ -1,0 +1,80 @@
+CandyShop
+
+package runner;
+
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.charset.MalformedInputException;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+
+import utils.Base;
+import utils.ExcelReader;
+import utils.Reporter;
+import utils.Screenshot;
+import utils.WebDriverHelper;
+
+public class TestSample extends Base {
+
+    WebDriverHelper helper=null;
+    ExtentReports extent=null;
+    ExtentTest test=null;
+    Actions actions=null;
+
+    @BeforeMethod
+    public void launchBrowser() throws MalformedURLException{
+        openBrowser();
+        extent=utils.Reporter.generateExtentReport("demo report");
+        helper=new WebDriverHelper(driver);
+        actions=new Actions(driver);
+    }
+
+    @Test
+    public void testOne() throws IOException {
+
+        test=extent.createTest("Login Page");
+        try{
+
+        driver.findElement(By.xpath("(//a[@class='nav-link'])[3]")).click();
+        WebElement email=driver.findElement(By.xpath("//input[@id=\"exampleInputEmail\"]"));
+        String value=ExcelReader.readdata("./testdata/data.xlsx", "Sheet1", 0, 0);
+        email.sendKeys(value);
+            
+
+        WebElement pass=driver.findElement(By.xpath("//input[@id=\"exampleInputPassword\"]"));
+        String p=ExcelReader.readdata("./testdata/data.xlsx", "Sheet1", 0, 1);
+        pass.sendKeys(p);
+
+        driver.findElement(By.xpath("//button[@class=\"btn btn-primary\"]")).click();
+
+        String path= Screenshot.getScreenShot(driver,"screenshot.png");
+        test.addScreenCaptureFromPath(path);
+        }
+
+
+        catch(Exception e){
+            e.printStackTrace();
+        }
+    
+
+    }
+
+    @AfterMethod
+    public void tearDown() {
+        if(driver!=null)
+        {
+            driver.quit();
+        }
+         if (extent != null) {
+            extent.flush();
+        }
+    }
+}

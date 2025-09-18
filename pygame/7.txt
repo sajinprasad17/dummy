@@ -1,0 +1,97 @@
+Hybrid Session3
+
+package runner;
+
+import java.io.IOException;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+
+import utils.Base;
+import utils.LoggerHandler;
+import utils.Reporter;
+import utils.Screenshot;
+
+public class TestSample extends Base{
+    ExtentReports extent;
+    ExtentTest test;
+    @BeforeMethod
+    public void before(){
+    try{
+        openBrowser();
+        extent=Reporter.generateExtentReport("sample");
+    }
+    catch(Exception e){
+        System.out.println(e);
+    }
+}
+@Test
+public void testcase1() throws IOException
+{
+    test=extent.createTest("hover on company");
+    try{
+        Actions act=new Actions(driver);
+        WebElement com=driver.findElement(By.xpath("(//span[text()=\"Company\"])[1]"));
+        act.moveToElement(com).perform();
+        LoggerHandler.info("click on companmy");
+        driver.findElement(By.linkText("About us")).click();
+       LoggerHandler.info("click on about us");
+        test.log(Status.PASS, "click on about us");
+        Actions act1=new Actions(driver);
+        WebElement brand=driver.findElement(By.xpath("//span[text()=\"Brands\"]"));
+        act1.moveToElement(brand).perform();
+        LoggerHandler.info("Hover on brands");
+        driver.findElement(By.xpath("//a[text()=\"Ginger\"]")).click();
+        LoggerHandler.info("click on ginger");
+        for(String handle:driver.getWindowHandles()){
+            driver.switchTo().window(handle);
+        }
+        driver.findElement(By.xpath("//div[text()=\"Book Your Stay\"]")).click();
+        Screenshot.captureScreenShot("ginger");
+        LoggerHandler.info("cscreenshot");
+    }
+    catch(Exception e){
+        test.log(Status.PASS, "click on about us");
+        System.out.println(e);
+    }
+}
+@Test
+public void testcase2() throws IOException
+{ test=extent.createTest("hover on contact us");
+    try{
+        Actions act=new Actions(driver);
+        WebElement con=driver.findElement(By.xpath("//span[text()=\"Contact us\"]"));
+        act.moveToElement(con).perform();
+        con.click();
+        LoggerHandler.info("clcik o conatcat");
+        WebElement world=driver.findElement(By.xpath("//h2[text()='Worldwide Reservations Centre']"));
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView();",world);
+        LoggerHandler.info("scroll");
+        Screenshot.captureScreenShot("contact_screenshot");
+        LoggerHandler.info("cscreenshot is taked");
+        Reporter.attachScreenshotToReport("contact_screenshot", test, "contact screenshot");
+        LoggerHandler.info("attached to the report");
+        driver.findElement(By.xpath("//a[text()=\"Privacy Policy\"]")).click();
+        LoggerHandler.info("clcik on privace policu"); 
+        driver.findElement(By.xpath("//p[text()=\"Subscribe\"]")).click();
+
+    }
+    catch(Exception e){
+        System.out.println(e);
+    }
+}
+@AfterMethod
+public void afet(){
+driver.quit();
+    extent.flush();
+}
+}

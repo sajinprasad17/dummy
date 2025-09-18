@@ -1,0 +1,107 @@
+[16/09, 11:59 am] Shivani: package runner;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.time.Duration;
+import java.util.Iterator;
+import java.util.Set;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.support.events.EventFiringDecorator;
+import org.openqa.selenium.support.events.WebDriverListener;
+import org.testng.Assert;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.Test;
+
+import utils.EventHandler;
+
+
+public class TestSpice {
+    public static WebDriver driver;
+    
+    @BeforeMethod
+    public void openBrowser() throws MalformedURLException {
+        ChromeOptions options = new ChromeOptions();
+        driver = new RemoteWebDriver(new URL("http://localhost:4444/"), options);
+        
+        WebDriverListener listener = new EventHandler();
+        driver = new EventFiringDecorator<>(listener).decorate(driver);
+
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.manage().window().maximize();
+        driver.get("https://www.spicejet.com");
+        
+    }
+
+    @Test
+    public void testcase1(){
+        driver.findElement(By.xpath("//div[contains(text(),'Signup')]")).click();
+        String parent=driver.getWindowHandle();
+        Set<String> windows=driver.getWindowHandles();
+        for(String window:windows){
+            if(!window.equals(parent)){
+                driver.switchTo().window(window);
+                break;
+            }
+        }
+
+        String title=driver.getTitle();
+        System.out.println("Child window title: " + title);
+        Assert.assertTrue(title.contains("SpiceClub"),"Test case failed");
+
+        driver.close();
+        driver.switchTo().window(parent);
+    }
+
+    @Test
+    public void testCreditCardApplicationFlow() throws InterruptedException {
+        //driver.get("https://www.spicejet.com/");
+
+        // Hover over 'SpiceClub' and click 'Credit Cards'
+        Actions actions = new Actions(driver);
+        WebElement spiceClubMenu = driver.findElement(By.xpath("//div[text()='SpiceClub']")); // Update locator if needed
+        actions.moveToElement(spiceClubMenu).perform();
+
+        Thread.sleep(1000); // Temporary wait for menu to appear
+
+        WebElement creditCardLink = driver.findElement(By.xpath("//a[contains(text(),'Credit Cards')]"));
+        creditCardLink.click();
+
+        // Handle new window
+        String parentWindow = driver.getWindowHandle();
+        Set<String> windows = driver.getWindowHandles();
+        for (String window : windows) {
+            if (!window.equals(parentWindow)) {
+                driver.switchTo().window(window);
+                break;
+            }
+        }
+
+        // Click the first 'Apply Now' button
+        WebElement applyNow = driver.findElement(By.xpath("(//button[contains(text(),'Apply')])[1]")); // Adjust locator
+        applyNow.click();
+
+        // Enter 10-digit test number and click 'Cancel'
+        WebElement mobileInput = driver.findElement(By.xpath("//input[@type='tel']")); // Adjust as needed
+        mobileInput.sendKeys("1234567890");
+
+        WebElement cancelButton = driver.findElement(By.xpath("//button[contains(text(),'Cancel')]")); // Adjust as needed
+        cancelButton.click();
+
+        // Optional: Verify action or return to parent window
+        driver.close();
+        driver.switchTo().window(parentWindow);
+    }
+    @AfterMethod
+    public void closeBrowser() {
+        if (driver != null) {
+            driver.quit();
+        }
+    } 
+}
+[16/09, 11:59 am] Shivani: Session 2 test ng

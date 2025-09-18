@@ -1,0 +1,56 @@
+lab 2 healthkart
+
+package runner;
+
+import org.openqa.selenium.remote.RemoteWebDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.events.EventFiringDecorator;
+import org.openqa.selenium.support.events.WebDriverListener;
+import org.testng.annotations.Test;
+import utils.EventHandler;
+import java.net.URL;
+import java.net.MalformedURLException;
+import java.time.Duration;
+
+public class TestPage {
+
+    @Test
+    public void testLogin() throws MalformedURLException {
+
+        ChromeOptions options = new ChromeOptions();
+        options.addArguments("--disable-notifications");
+
+        DesiredCapabilities dc = new DesiredCapabilities();
+        dc.setCapability(ChromeOptions.CAPABILITY, options);
+
+        WebDriver rawDriver = new RemoteWebDriver(
+                new URL("http://localhost:4444/wd/hub"), dc);
+
+        // Apply listener decoration
+        WebDriverListener listener = new EventHandler();
+        WebDriver driver = new EventFiringDecorator<>(listener).decorate(rawDriver);
+
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(15));
+
+        driver.get("https://opensource-demo.orangehrmlive.com/web/index.php/auth/login");
+
+        // ---- START YOUR SCRIPT FROM HERE ----
+        driver.get("https://www.healthkart.com/");
+        WebElement ele1 = driver.findElement(By.xpath("(//li[@class='list-level1-item arrow-down'])[2]"));
+
+        Actions actions = new Actions(driver);
+        actions.moveToElement(ele1).perform();
+
+        driver.findElement(By.linkText("Muscleblaze")).click();
+        driver.findElement(By.xpath("(//span[contains(text(),'Whey Proteins')])[1]")).click();
+
+        driver.quit();
+    }
+} 

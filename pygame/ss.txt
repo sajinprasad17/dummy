@@ -1,0 +1,15 @@
+ScreenShot 
+public void test(){
+
+        driver.get("https://www.spicejet.com/");
+
+        File src=((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+        File des=new File("/home/coder/project/workspace/Project/screenshots");
+        try{
+        FileHandler.copy(src, des);}
+        catch(IOException e)
+        {
+            System.out.println("error");
+        }
+
+    }
