@@ -1,0 +1,102 @@
+Hybrid Session 1
+
+package runner;
+
+
+import org.apache.poi.ss.formula.functions.T;
+import org.openqa.selenium.By;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.Test;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.Status;
+
+import utils.Base;
+import utils.LoggerHandler;
+import utils.Reporter;
+import utils.Screenshot;
+import utils.WebDriverHelper;
+
+public class TestClass extends Base{
+WebDriverHelper wb;
+  ExtentReports et;
+     ExtentTest test;
+
+@BeforeMethod
+public void setup(){
+    openBrowser();
+    wb=new WebDriverHelper(driver);
+    et=Reporter.generateExtentReport("Demo_Report");
+    
+
+}
+@Test(priority = 1)
+public void tre() throws Exception{
+    test = et.createTest("tre");
+    wb.clickOnElement(By.xpath("//*[@id=\"container\"]/div[1]/header/div/div/div[4]/div[2]"));
+    LoggerHandler.info("click on signin");
+    wb.clickOnElement(By.xpath("//*[@id=\"slick-slide00\"]/div/div[3]/a[1]/img"));
+    wb.switchToNewWindow();
+    wb.javascriptScroll(By.xpath("//*[@id=\"content\"]/div/div[1]/div[2]/div[3]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div[2]/div[1]/div[1]/div/a"));
+    wb.clickOnElement(By.xpath("//*[@id=\"content\"]/div/div[1]/div[2]/div[3]/div/div/div[2]/div/div/div[1]/div/div[2]/div/div[2]/div[1]/div[1]/div/a"));
+    wb.clickOnElement(By.xpath("//*[@id=\"ui-id-1\"]/div/div/div[4]/a"));
+    test.pass("Take Screenshot");
+    Screenshot.captureScreenShot("agronetto_screenshot");
+    test.addScreenCaptureFromPath(System.getProperty("user.dir")+"/screenshots/agronetto_screenshot.png");
+
+    Thread.sleep(5000);
+}
+@Test(priority=2)
+public void fgj() throws Exception{
+    test = et.createTest("tytt");
+    wb.javascriptScroll(By.xpath("//*[@id=\"container\"]/div[3]/div/div[1]/div[1]/div[2]/div[2]/span[5]/a"));
+    wb.clickOnElement(By.xpath("//*[@id=\"container\"]/div[3]/div/div[1]/div[1]/div[2]/div[2]/span[5]/a"));
+    LoggerHandler.info("click on Blog");
+    LoggerHandler.info("click on Blog");
+    LoggerHandler.info("click on Blog");
+    LoggerHandler.info("click on Blog");
+    LoggerHandler.info("click on Blog");
+    LoggerHandler.info("click on Blog");
+    LoggerHandler.info("click on Blog");
+    LoggerHandler.info("click on Blog");
+    LoggerHandler.info("click on Blog");
+    LoggerHandler.info("click on Blog");
+    LoggerHandler.info("click on Blog");
+    test.log(Status.PASS, "Blog Clicked");
+    wb.hoverOverElement(By.xpath("/html/body/div/div/header/div[1]/section[2]/div/div[1]/div/div[2]/div/div/div"));
+    wb.clickOnElement(By.xpath("//*[@id=\"menu-item-1535\"]/a"));
+    wb.switchToNewWindow();
+    wb.clickOnElement(By.xpath("//*[@id=\"menu-item-1582\"]/a/span"));
+    test.pass("Take Screenshot");
+    Screenshot.captureScreenShot("No result");
+    test.addScreenCaptureFromPath(System.getProperty("user.dir")+"/screenshots/No result.png");
+    Thread.sleep(5000);
+}
+@Test(priority=3)
+
+public void vgt() throws Exception{
+    
+ wb.clickOnElement(By.xpath("//*[@id=\"content\"]/div/div[1]/div[2]/div[2]/div[4]"));
+ wb.sendKeys(By.xpath("//*[@id=\"content\"]/div/div[1]/div[8]/div/div/div[2]/form/input[3]"), "37178");
+ wb.enterAction(By.xpath("//*[@id=\"content\"]/div/div[1]/div[8]/div/div/div[2]/form/input[3]"));
+ wb.clickOnElement(By.xpath("//*[@id=\"content\"]/div[3]/div/div/div[2]/div[1]/div[2]/div/div[1]/div"));
+ wb.clickOnElement(By.xpath("//*[@id=\"content\"]/div[3]/div/div/div[2]/div[1]/div[2]/div/div[2]/div/span[3]"));
+ Thread.sleep(5000);
+}
+@AfterMethod
+public void fyt(){
+   
+    if(driver !=null){
+        driver.quit();
+    }
+}
+ @AfterClass
+    public void toFlush(){
+        if(et!=null){
+            et.flush();
+        }
+    }
+}
